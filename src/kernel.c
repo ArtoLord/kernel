@@ -6,19 +6,12 @@
 void kmain(void)
 {    
     init_descriptor_tables();   
-    kprint("HEY");
+    kprint("[KERNEL] dt inited\n");
     init_mem();
-
+    kprint("[KERNEL] mem inited\n");
     writer_init();
     kprint("[KERNEL]  started\n");
-    kprint((int)kmallock(sizeof(int)));
-    kprint(" ");
-    kprint((int)kmallock(sizeof(int)));
-    kprint(" ");
-    kprint((int)kmallock(sizeof(int)));
-    kprint(" ");
-    kprint((int)kmallock(sizeof(int)));
-    //deque * d = new_deque();
+    deque * d = new_deque();
     int a = 1;
     string b = "Hello";
     char c = 'H';

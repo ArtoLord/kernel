@@ -15,8 +15,6 @@ void init_mem(){
 
 void *kmallock(size_t size){
     void * a =  hmallock(kernal_heap, size);
-    kprint((int)a);
-    kprint(" ");
     return a;
 }
 

@@ -21,7 +21,7 @@ rb_e_cash * get_used(
         main
     };
     main_rb->entry = (rb_e){
-        addr,
+        size,
         RB_BLACK,
         &main->entry,
         tree_used->nil,
@@ -51,7 +51,7 @@ rb_e_cash * get_unused(
         main
     };
     main_rb->entry = (rb_e){
-        size,
+        addr,
         RB_BLACK,
         &main->entry,
         tree_unused->nil,
@@ -105,14 +105,17 @@ heap *init_heap(heap *h,void *beg, void *end, size_t cash_size){
         rb_holder
     };
     rb_e *curr = &get_unused(h,\
+            (size_t)(beg+CASH_O+\
+            sizeof(mem_block_cash)*cash_size+\
+            sizeof(rb_e_cash)*cash_size),\
             end-\
             (beg+CASH_O+\
             sizeof(mem_block_cash)*cash_size+\
-            sizeof(rb_e_cash)*cash_size),\
-            (size_t)(beg+CASH_O+\
-            sizeof(mem_block_cash)*cash_size+\
             sizeof(rb_e_cash)*cash_size)\
             , null, null)->entry;
+    kprint("curr ");
+    kprint((int)curr->data);
+    kprint(";");
 
     rb_e *used_to = null;
     mem_block_t *curr_block = curr->data;
@@ -126,19 +129,18 @@ heap *init_heap(heap *h,void *beg, void *end, size_t cash_size){
 void *hmallock(heap *h,size_t size){
     GET_HEAP(h);
     //assert(size>0);
-    rb_e * curr = rb_find(tree_unused ,size);
-
-    if (curr != null){
-        mem_block_t *curr_block = curr->data;
+    rb_e * curr = rb_next(tree_unused ,size);
+    kprint("curr1 ");
+    kprint((int)((mem_block_t *)(curr->data))->size);
+    kprint("; ");
+    //assert(curr==tree_unused->nil);
+    mem_block_t *curr_block = curr->data;
+    if (curr_block->size==size){
         curr_block->used = true;
         rb_delete(tree_unused,curr);
         _rb_insert(tree_used,curr);
         return (void *)curr_block->addr;
     }
-    curr = rb_next(tree_unused, size);
-    //assert(curr==tree_unused->nil);
-    mem_block_t *curr_block = curr->data;
-
 
     rb_e *curr_to = rb_find(
             tree_used_to_unused,\
@@ -148,18 +150,18 @@ void *hmallock(heap *h,size_t size){
     rb_delete(tree_used_to_unused, curr_to);
 
     rb_e_cash * used_cash = get_used(h,
-            size,\
             curr_block->addr,\
+            size,\
             curr_block->prev,\
             curr_block->next
             );
     rb_e *used = &used_cash->entry;
 
     rb_e *unused =&get_unused(h,
-            curr_block->size-size,\
             curr_block->addr+size,\
+            curr_block->size-size,\
             used->data,\
-            curr_block->next
+            ((mem_block_t *)used->data)->next
             )->entry;
 
     ((mem_block_t *)used->data)->next = unused->data;
@@ -182,8 +184,6 @@ void *hmallock(heap *h,size_t size){
 
 void hfree(heap *h, void *addr){
     GET_HEAP(h);
-
-
 
     rb_e *curr = rb_find(tree_used, (int)addr);
     //assert(curr==tree_used->nil);
@@ -225,7 +225,7 @@ void hfree(heap *h, void *addr){
 
         curr_block->next = next_block->next;
         curr_block->size +=next_block->size;
-        next_block->next->prev = curr_block;
+        next_block->next->prev = curr_block; 
         cash_free(mem_holder, next_block->cash_pointer);
         cash_free(rb_holder, next->cash_pointer);
 
@@ -239,6 +239,6 @@ void hfree(heap *h, void *addr){
     curr->left = tree_unused->nil;
     curr->right = tree_unused->nil;
     curr->parent = tree_unused->nil;
-    curr->key = curr_block->size;
+    curr->key = curr_block->addr;
     _rb_insert(tree_unused,curr);
 }
