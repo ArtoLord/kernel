@@ -6,7 +6,9 @@
 void kmain(void)
 {    
     init_descriptor_tables();   
+    kprint("HEY");
     init_mem();
+
     writer_init();
     kprint("[KERNEL]  started\n");
     kprint((int)kmallock(sizeof(int)));

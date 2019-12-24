@@ -4,8 +4,8 @@ char * videomem  = (char *)0xB8000;
 
 int current_pos = 0;
 size_t current_buffer_size = BUFFER_SIZE;
-char  *string_buffer = (char *)0x10000000;
-char  *type_buffer = (char *)(0x10000000+sizeof(char)*BUFFER_SIZE);
+char  *string_buffer = (char *)0x1000000;
+char  *type_buffer = (char *)(0x1000000+sizeof(char)*BUFFER_SIZE);
 int scroll_pos = 0;
 
 
@@ -13,10 +13,10 @@ void _write_to_buffer(char s, char type);
 
 void writer_init(){
     char * curr_str = kmallock(sizeof(char)*current_buffer_size*2);
-        char * curr_type = kmallock(sizeof(char)*current_buffer_size*2);
+    char * curr_type = kmallock(sizeof(char)*current_buffer_size*2);
         for (int i = 0; i < current_buffer_size*2;i++){
-            string_buffer[i] = 0;
-            type_buffer[i] = 0;
+            curr_str[i] = 0;
+            curr_type[i] = 0;
         }
         for (int i = 0;i<current_buffer_size;i++){
             curr_str[i] = string_buffer[i];
@@ -25,10 +25,6 @@ void writer_init(){
         string_buffer = curr_str;
         type_buffer = curr_type;
         current_buffer_size *= 2;
-    for (int i = 0;i<BUFFER_SIZE;i++){
-        string_buffer[i] = 0;
-        type_buffer[i] = 0;
-    }
 }
 
 
@@ -72,8 +68,8 @@ void _write_to_buffer(char s, char type){
         char * curr_str = kmallock(sizeof(char)*current_buffer_size*2);
         char * curr_type = kmallock(sizeof(char)*current_buffer_size*2);
         for (int i = 0; i < current_buffer_size*2;i++){
-            string_buffer[i] = 0;
-            type_buffer[i] = 0;
+            curr_str[i] = 0;
+            curr_type[i] = 0;
         }
         for (int i = 0;i<current_buffer_size;i++){
             curr_str[i] = string_buffer[i];
