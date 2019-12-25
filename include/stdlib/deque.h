@@ -31,6 +31,7 @@ else {ent = d->free->front; pop_front(d->free);}\
 };\
 if (after==null) {\
     d->front = ent;\
+    ent->prev = null;\
 }\
 else{\
     after->next = ent;\
@@ -38,6 +39,7 @@ else{\
 }\
 if (before==null) {\
     d->back = ent;\
+    ent->next = null;\
 }\
 else{\
     before->prev = ent;\
@@ -45,9 +47,9 @@ else{\
 *(typeof(data) *)(ent+sizeof(deque_e)) = data;}
 
 #define push_front(d, data) \
-push(d,null,d->front,data)
+push(d,((deque_e *)null),(d->front),data)
 
-#define push_back(d,data) push(d,d->back, null, data)
+#define push_back(d,data) push(d,(d->back),((deque_e *)null), data)
 
 void pop_back(deque *d);
 
