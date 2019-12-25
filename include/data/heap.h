@@ -27,5 +27,5 @@ typedef struct heap_t {
 
 heap *init_heap(heap *h, void *mem_begin, void *mem_end, size_t cash_size);
 
-void *hmallock(heap *h, size_t size);
+void *hmallock(heap *h, size_t size, bool align);
 void hfree(heap *h, void *addr);

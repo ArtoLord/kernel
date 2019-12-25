@@ -19,7 +19,7 @@ typedef struct page_t{
     u32     accessed    :1;
     u32     dirty       :1;
     u32     unused      :7;
-    u32     real       :20;
+    u32     frame       :20;
 }page;
 
 typedef struct page_table_t{
@@ -42,9 +42,11 @@ page * allock_pages(size_t num);
 
 void   free_pages(page *addr, size_t num);
 
-void swith_page_dir(page_directory *dir);
+void switch_page_dir(page_directory *dir);
 
 page *get_page(size_t addres, int make, page_directory *dir);
 
 
 void page_fault(registers_t regs);
+
+page * allock_frame(page * p, bool is_kernal, bool is_super);

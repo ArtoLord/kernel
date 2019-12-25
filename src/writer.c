@@ -95,7 +95,7 @@ void kprint_str_ch(string str, char type){
 
 void kpanic(string str){
     kprint_t(str, TYPE_PANIC);
-    //asm_hlt();
+    asm volatile("hlt");
 }
 
 void kwarning(string str){

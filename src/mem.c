@@ -14,8 +14,12 @@ void init_mem(){
 }
 
 void *kmallock(size_t size){
-    void * a =  hmallock(kernal_heap, size);
+    void * a =  hmallock(kernal_heap, size, false);
     return a;
+}
+
+void *kmallock_a(size_t size){
+    return hmallock(kernal_heap, size, true);
 }
 
 void kfree(void *addr){

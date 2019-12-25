@@ -47,9 +47,9 @@ else{\
 *(typeof(data) *)(ent+sizeof(deque_e)) = data;}
 
 #define push_front(d, data) \
-push(d,((deque_e *)null),(d->front),data)
+push((d),((deque_e *)null),(d->front),(data))
 
-#define push_back(d,data) push(d,(d->back),((deque_e *)null), data)
+#define push_back(d,data) push((d),(d->back),((deque_e *)null), (data))
 
 void pop_back(deque *d);
 
@@ -61,4 +61,10 @@ void *back(deque *d);
 
 void clear(deque *d);
 
-deque *new_deque();
+void destruct_deque(deque *d);
+
+deque *new_deque(deque *d);
+
+void push_front_deque(deque *d1, deque *d2);
+
+void push_back_deque(deque *d1, deque *d2);

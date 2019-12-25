@@ -1,8 +1,10 @@
 #include "stdlib/deque.h"
 
 
-deque *new_deque(){
-    deque * curr = kmallock(sizeof(deque));
+deque *new_deque(deque *curr){
+    if (curr==null){
+        deque * curr = kmallock(sizeof(deque));
+    }
     deque * free = kmallock(sizeof(deque));
     *free = (deque){null, null, null};
     *curr = (deque){\

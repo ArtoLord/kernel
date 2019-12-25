@@ -13,6 +13,8 @@
 
 void *kmallock (size_t size);
 
+void *kmallock_a(size_t size);
+
 void kfree (void *addr);
 
 void init_mem();

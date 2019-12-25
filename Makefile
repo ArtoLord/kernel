@@ -28,10 +28,11 @@ build-kernel: ./src/kernel.c ./src/writer.c ./src/rb_tree.c
 	$(CC) $(CC_FLAGS) -c ./src/rb_tree.c -o $(BUILD_DIR)/rb_tree.c.o
 	$(CC) $(CC_FLAGS) -c ./src/writer.c -o $(BUILD_DIR)/writer.c.o
 
-build-mem: ./src/mem.c ./src/mem/cash.c ./src/data/heap.c
+build-mem: ./src/mem.c ./src/mem/cash.c ./src/data/heap.c ./src/mmu/page.c
 	$(CC) $(CC_FLAGS) -c ./src/mem.c -o $(BUILD_DIR)/mem.c.o
 	$(CC) $(CC_FLAGS) -c ./src/data/heap.c -o $(BUILD_DIR)/heap.c.o
-	$(CC) $(CC_FLAGS) -c ./src/mem/cash.c -o $(BUILD_DIR)/cash.c.o
+	$(CC) $(CC_FLAGS) -c ./src/mem/cash.c -o $(BUILD_DIR)/cash.c.o 
+	$(CC) $(CC_FLAGS) -c ./src/mmu/page.c -o $(BUILD_DIR)/page.c.o
 
 build-kernel-arch-asm: ./src/arch/*.s 
 	$(AS) $(AS_FLAGS) ./src/arch/gdt.s -o $(BUILD_DIR)/gdt.s.o

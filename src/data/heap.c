@@ -123,9 +123,14 @@ heap *init_heap(heap *h,void *beg, void *end, size_t cash_size){
     return h;
 }
 
-void *hmallock(heap *h,size_t size){
+void *hmallock(heap *h,size_t size, bool align){
     GET_HEAP(h);
+    size_t tmp_size = 0;
     //assert(size>0);
+    if (align){
+        tmp_size=size;
+        size+=0x2000;
+    }
     rb_e * curr = rb_find(tree_unused ,size);
 
     if (curr != null){
@@ -177,6 +182,54 @@ void *hmallock(heap *h,size_t size){
 
     cash_free(rb_holder, curr->cash_pointer);
     cash_free(mem_holder, curr_block->cash_pointer);
+
+    if (align){
+        size_t adr = (size_t)curr_block->addr;
+        mem_block_t *curr_b = (mem_block_t *) used->data;
+
+        size_t new_adr = 0;
+        if (adr % 0x1000==0) new_adr = adr;
+        else{
+            new_adr = 0x1000*(adr/0x1000+1);
+        }
+        size_t first_s = new_adr-adr, first_a = adr,\
+                         sec_s = size-new_adr-tmp_size,\
+                         sec_a = new_adr+tmp_size;
+
+        if (first_s!=0){
+            rb_e *un = &(get_unused(h,
+                    first_s,
+                    first_a,
+                    curr_b->prev,
+                    curr_b)->entry);
+            rb_e *u_t = &get_used_to(h,\
+                        first_a,
+                        un)->entry;
+            mem_block_t * un_b = (mem_block_t *)un->data;
+            curr_b->prev = un_b;
+            _rb_insert(tree_unused, un);
+            _rb_insert(tree_used_to_unused, u_t);
+        }
+        if (sec_s!=0){
+            rb_e *u = &(get_unused(h,
+                    sec_s,
+                    sec_a,
+                    curr_b,
+                    curr_b->next)->entry);
+            rb_e *u_t = &get_used_to(h,\
+                        sec_a,
+                        u)->entry;
+            mem_block_t * u_b = (mem_block_t *)u->data;
+            curr_b->next = u_b;
+            _rb_insert(tree_unused, u);
+            _rb_insert(tree_used_to_unused, u_t);
+        }
+        rb_delete(tree_used,used);
+        used->key = new_adr;
+        _rb_insert(tree_used, used);
+        return (void *) new_adr;
+    }
+
     return (void *)curr_block->addr;
 }
 
